@@ -23,10 +23,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="no-js">
+    <html lang="en">
       <body>
         {children}
-        <Script src="/bundle.js" strategy="afterInteractive" />
+        <Script src="/animations.js" strategy="afterInteractive" />
       </body>
     </html>
   )
