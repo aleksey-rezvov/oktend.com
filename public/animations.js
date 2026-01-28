@@ -1,189 +1,121 @@
-// OKTEND Animations - No redirects, just animations
+// OKTEND Animations - Typewriter effect
 
 (function() {
   'use strict';
 
-  // Hide preloader when page loads
-  window.addEventListener('load', function() {
+  function init() {
+    // Hide preloader
     var preloader = document.querySelector('.preloader-area');
     if (preloader) {
-      preloader.style.opacity = '0';
-      setTimeout(function() {
-        preloader.style.display = 'none';
-      }, 500);
+      preloader.style.display = 'none';
     }
-  });
-
-  // Text rotation animation for cd-headline
-  function initTextRotation() {
-    var headlines = document.querySelectorAll('.cd-headline');
     
+    // Initialize all typewriter headlines
+    var headlines = document.querySelectorAll('.cd-headline.clip');
     headlines.forEach(function(headline) {
-      var words = headline.querySelectorAll('.cd-words-wrapper b');
-      if (words.length === 0) return;
-      
-      var currentIndex = 0;
-      
-      // Initially show only first word
-      words.forEach(function(word, index) {
-        if (index === 0) {
-          word.classList.add('is-visible');
-          word.style.opacity = '1';
-        } else {
-          word.classList.remove('is-visible');
-          word.style.opacity = '0';
-          word.style.display = 'none';
-        }
-      });
-      
-      // Rotate words every 3 seconds
-      setInterval(function() {
-        var current = words[currentIndex];
-        currentIndex = (currentIndex + 1) % words.length;
-        var next = words[currentIndex];
-        
-        // Fade out current
-        current.style.opacity = '0';
-        setTimeout(function() {
-          current.style.display = 'none';
-          current.classList.remove('is-visible');
-          
-          // Fade in next
-          next.style.display = 'inline-block';
-          next.classList.add('is-visible');
-          setTimeout(function() {
-            next.style.opacity = '1';
-          }, 50);
-        }, 500);
-      }, 3000);
+      new TypewriterHeadline(headline);
     });
   }
 
-  // Flip card animation for team leagues
-  function initFlipCards() {
-    var flipContainers = document.querySelectorAll('.flip-container, .flip-container-2');
+  function TypewriterHeadline(element) {
+    this.element = element;
+    this.words = element.querySelectorAll('.cd-words-wrapper b');
+    this.currentIndex = 0;
+    this.typeSpeed = 80;      // Speed of typing each character
+    this.deleteSpeed = 40;    // Speed of deleting each character
+    this.pauseBeforeDelete = 2000;  // Pause before starting to delete
+    this.pauseBeforeType = 500;     // Pause before typing new word
     
-    flipContainers.forEach(function(container) {
-      container.addEventListener('mouseenter', function() {
-        var flipper = this.querySelector('.flipper');
-        if (flipper) {
-          flipper.style.transform = 'rotateY(180deg)';
-        }
-      });
-      
-      container.addEventListener('mouseleave', function() {
-        var flipper = this.querySelector('.flipper');
-        if (flipper) {
-          flipper.style.transform = 'rotateY(0deg)';
-        }
-      });
-    });
-  }
-
-  // Circle hover animation for pricing
-  function initCircleHover() {
-    var circles = document.querySelectorAll('.ch-item');
+    if (this.words.length === 0) return;
     
-    circles.forEach(function(circle) {
-      var info = circle.querySelector('.ch-info');
-      var front = circle.querySelector('.ch-info-front');
-      var back = circle.querySelector('.ch-info-back');
-      
-      if (!info || !front || !back) return;
-      
-      circle.addEventListener('mouseenter', function() {
-        info.style.transform = 'rotateY(180deg)';
-      });
-      
-      circle.addEventListener('mouseleave', function() {
-        info.style.transform = 'rotateY(0deg)';
-      });
-    });
-  }
-
-  // Smooth scroll for anchor links
-  function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-      anchor.addEventListener('click', function(e) {
-        var targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        
-        var target = document.querySelector(targetId);
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-  }
-
-  // Sticky header on scroll
-  function initStickyHeader() {
-    var header = document.getElementById('sticky-header');
-    if (!header) return;
-    
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 100) {
-        header.classList.add('sticky');
+    // Set initial state
+    this.words.forEach(function(word, index) {
+      if (index === 0) {
+        word.classList.add('is-visible');
+        word.style.opacity = '1';
       } else {
-        header.classList.remove('sticky');
+        word.classList.remove('is-visible');
+        word.style.opacity = '0';
       }
     });
+    
+    // Start the animation cycle after initial pause
+    var self = this;
+    setTimeout(function() {
+      self.deleteWord();
+    }, this.pauseBeforeDelete);
   }
 
-  // Mobile menu toggle
-  function initMobileMenu() {
-    var hamburger = document.querySelector('.hamburger');
-    var mobileMenu = document.querySelector('.mobile-menu-area');
+  TypewriterHeadline.prototype.deleteWord = function() {
+    var self = this;
+    var currentWord = this.words[this.currentIndex];
+    var text = currentWord.textContent;
+    var charIndex = text.length;
     
-    if (hamburger && mobileMenu) {
-      hamburger.addEventListener('click', function() {
-        this.classList.toggle('is-active');
-        mobileMenu.classList.toggle('active');
-      });
-    }
-  }
-
-  // Progress bar animation on scroll
-  function initProgressBars() {
-    var progressBars = document.querySelectorAll('.progress-bar');
-    var animated = false;
-    
-    function animateProgressBars() {
-      var portfolioSection = document.getElementById('portfolio');
-      if (!portfolioSection || animated) return;
-      
-      var rect = portfolioSection.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom > 0) {
-        animated = true;
-        progressBars.forEach(function(bar) {
-          var width = bar.getAttribute('aria-valuenow') + '%';
-          bar.style.width = width;
-        });
+    function deleteChar() {
+      if (charIndex > 0) {
+        charIndex--;
+        currentWord.textContent = text.substring(0, charIndex);
+        setTimeout(deleteChar, self.deleteSpeed);
+      } else {
+        // Word deleted, switch to next word
+        currentWord.classList.remove('is-visible');
+        currentWord.style.opacity = '0';
+        
+        // Move to next word
+        self.currentIndex = (self.currentIndex + 1) % self.words.length;
+        
+        // Store original text for next word
+        var nextWord = self.words[self.currentIndex];
+        if (!nextWord.dataset.originalText) {
+          nextWord.dataset.originalText = nextWord.textContent;
+        }
+        nextWord.textContent = '';
+        nextWord.classList.add('is-visible');
+        nextWord.style.opacity = '1';
+        
+        setTimeout(function() {
+          self.typeWord();
+        }, self.pauseBeforeType);
       }
     }
     
-    window.addEventListener('scroll', animateProgressBars);
-    animateProgressBars(); // Check on load
-  }
+    deleteChar();
+  };
 
-  // Initialize all animations when DOM is ready
+  TypewriterHeadline.prototype.typeWord = function() {
+    var self = this;
+    var currentWord = this.words[this.currentIndex];
+    var fullText = currentWord.dataset.originalText || currentWord.textContent;
+    var charIndex = 0;
+    
+    // Store original text if not stored yet
+    if (!currentWord.dataset.originalText) {
+      currentWord.dataset.originalText = fullText;
+    }
+    
+    currentWord.textContent = '';
+    
+    function typeChar() {
+      if (charIndex < fullText.length) {
+        charIndex++;
+        currentWord.textContent = fullText.substring(0, charIndex);
+        setTimeout(typeChar, self.typeSpeed);
+      } else {
+        // Word fully typed, pause then delete
+        setTimeout(function() {
+          self.deleteWord();
+        }, self.pauseBeforeDelete);
+      }
+    }
+    
+    typeChar();
+  };
+
+  // Run init when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
-  }
-
-  function init() {
-    initTextRotation();
-    initFlipCards();
-    initCircleHover();
-    initSmoothScroll();
-    initStickyHeader();
-    initMobileMenu();
-    initProgressBars();
   }
 })();

@@ -1,18 +1,26 @@
 /* Import original styles */
 @import '../styles/main.css';
 
-/* Animation enhancements */
+/* Hide preloader immediately - no JS delay */
 .preloader-area {
-  transition: opacity 0.5s ease;
+  display: none !important;
 }
 
-.cd-words-wrapper b {
-  transition: opacity 0.5s ease;
+/* Flip card animation for team leagues */
+.flip-container,
+.flip-container-2 {
+  perspective: 1000px;
 }
 
 .flipper {
   transition: transform 0.6s ease;
   transform-style: preserve-3d;
+  position: relative;
+}
+
+.flip-container:hover .flipper,
+.flip-container-2:hover .flipper {
+  transform: rotateX(180deg);
 }
 
 .flip-container .front,
@@ -20,11 +28,21 @@
 .flip-container-2 .front,
 .flip-container-2 .back {
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .flip-container .back,
 .flip-container-2 .back {
-  transform: rotateY(180deg);
+  transform: rotateX(180deg);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Pricing circles flip animation */
+.ch-item {
+  perspective: 900px;
 }
 
 .ch-info {
@@ -32,16 +50,17 @@
   transform-style: preserve-3d;
 }
 
+.ch-item:hover .ch-info {
+  transform: rotateX(-90deg);
+}
+
 .ch-info-front,
 .ch-info-back {
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .ch-info-back {
-  transform: rotateY(180deg);
-}
-
-.progress-bar {
-  transition: width 1s ease;
-  width: 0;
+  transform: translateZ(-220px) rotateX(90deg);
+  opacity: 1 !important;
 }

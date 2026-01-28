@@ -74,7 +74,7 @@ export default function Home() {
                 <div className="slider-item">
                   <h2 className="intro-title">Hi, we are OKTEND</h2>
                   <h1 className="cd-headline clip is-full-width">
-                    <span>we</span>
+                    <span>we </span>
                     <span className="cd-words-wrapper">
                       <b className="is-visible">develop web applications</b>
                       <b>design system architecture</b>
@@ -233,7 +233,7 @@ export default function Home() {
               
               <div className="about-content" data-stellar-background-ratio="0.9">
                 <h2 className="cd-headline clip is-full-width">
-                  <span>our</span>
+                  <span>our </span>
                   <span className="cd-words-wrapper">
                     <b className="is-visible">projects</b>
                     <b>products</b>
