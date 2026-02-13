@@ -70,6 +70,10 @@ The site is configured for static export. After running `pnpm build`, deploy the
 
 For GitHub Pages, you can use GitHub Actions or deploy manually by pushing the `out/` directory to the `gh-pages` branch.
 
+## For LLM / AI Assistants
+
+This README is optimized for human readers. For LLM consumption (Claude Code, Cursor, etc.), see [CLAUDE.md](CLAUDE.md) which provides a structured reference with quick navigation.
+
 ## License
 
 Copyright © 2017-2026 OKTEND
